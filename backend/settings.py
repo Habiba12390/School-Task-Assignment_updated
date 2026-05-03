@@ -16,6 +16,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',   
+    'corsheaders', 
     'accounts.apps.AccountsConfig',
     'tasks.apps.TasksConfig',
     'dashboard.apps.DashboardConfig',
@@ -82,3 +84,9 @@ STATIC_URL = '/static/'
 CORS_ALLOW_ALL_ORIGINS = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'tasks/static')
+]
+
+CORS_ALLOW_ALL_ORIGINS = True

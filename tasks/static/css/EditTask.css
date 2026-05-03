@@ -8,7 +8,7 @@
 body {
     background: #eff7fd; 
     color: #000000;   
-    line-height: 1.6;   
+    line-height: 1.6; 
 }
 
 nav {
@@ -94,18 +94,12 @@ nav a {
     box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); 
 }
 
-h2 {
-    text-align: center;
-    font-size: 2.35rem;
-    margin-bottom: 2.5rem;
-    color: #1f2937;
-}
 
 form {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto 5rem;
     background: #ffffff;
-    padding: 50px 50px;
+    padding: 50px;
     border-radius: 20px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
     border: 2px solid #e5e7eb;
@@ -114,9 +108,8 @@ form {
 form label {
     display: block;
     font-weight: 600;
-    margin-bottom: 3px;       
+    margin-bottom: 8px;
     color: #374151;
-    font-size: 1rem;
 }
 .large-label {
     font-size: 2.5rem; 
@@ -124,70 +117,49 @@ form label {
     margin-bottom: 12px;
 } 
 
-.priority-label {
-    margin-bottom: 12px;
-}
 
 input[type="text"], textarea {
     width: 90%;
     padding: 15px;
-    border: 1.5px solid #ababab;
+    border: 1.5px solid #000000;
     border-radius: 12px;
     font-size: 1rem;
-    margin-bottom: 15px;     
-    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    transition: 0.3s;
 }
 
-input[type="text"]:focus, textarea:focus {
-    border-color: #95beff;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); 
+input:focus, textarea:focus {
+    border-color: #3b82f6;
     outline: none;
-}
-
-.priority-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 25px;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 input[type="radio"] {
-    accent-color: #3b82f6;   
+    accent-color: #3b82f6;
     transform: scale(1.2);
+    margin-right: 5px;
+}
+
+form label[for="low"], form label[for="medium"], form label[for="high"] {
+    display: inline-block;
+    margin-right: 20px;
+    font-weight: 500;
     cursor: pointer;
-}
-
-.priority-group label {
-    display: inline;          
-    margin: 0 20px 0 0; 
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.button-group {
-    display: flex;
-    gap: 25px;
-    margin-top: 10px;
-}
-
+}  
 
 button {
-    padding: 12px 20px;  
-    border-radius: 15px;
-    flex: 1;            
-    max-width: 400px; 
-    font-size: 1.0rem;
+    padding: 12px 0;
+    width: 30%; 
+    margin-right: 2%;
+    border-radius: 12px;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: 0.3s;
     border: none;
-    white-space: nowrap; 
 }
-.button-container {
-    display: flex;       
-    gap: 15px;        
-    margin-top: 15px;
-}
+
+
 button[type="submit"] {
     background: linear-gradient(90deg, #3b82f6, #10b981);
     color: white;
@@ -212,8 +184,17 @@ button[type="reset"]:hover {
 
 }
 
+button[type="button"] {
+    background: #ffdfdf;
+    color: #ef4444;
+    margin-right: 0; 
+}
 
-
+button[type="button"]:hover {
+    transform: translateY(-2px); 
+     box-shadow: 0 5px 15px  #ffe3e3;
+    background: #ffcccc;
+}
 
 footer {
     padding: 3rem 1rem 2rem;
@@ -254,6 +235,10 @@ footer p a:hover {
 }
 
 
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
 
 .success-message {
     position: fixed;
@@ -271,6 +256,23 @@ footer p a:hover {
     animation: slideIn 0.3s ease-out;
     font-family: 'Segoe UI', Tahoma, sans-serif;
 }
+
+.error-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    color: #ef4444;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+    border: 1.5px solid #ef4444;
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+} 
 
 
 @media (max-width: 768px) {

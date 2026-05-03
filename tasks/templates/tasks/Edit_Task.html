@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">    
     <title>Edit Task - YallaDo</title>
-    <link rel="stylesheet" href="EditTask.css">
-    <script src="EditTask.js" defer></script>
+    <link rel="stylesheet" href="{% static 'css/Edit_task.css' %}">
+    <script src="{% static 'js/Edit_task.js' %}" defer></script>
 </head>
 <body>
 
@@ -22,7 +23,7 @@
         </div>
     </nav>
 
-    <form action="admin_tasks_list.html" method="post">
+    <form id="editTaskForm">
 
         <label for="EditTask" class="large-label">Edit Task</label>
 

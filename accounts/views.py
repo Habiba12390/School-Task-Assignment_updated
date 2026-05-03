@@ -1,7 +1,7 @@
 import json
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse # type: ignore
+from django.shortcuts import render # type: ignore
+from django.views.decorators.csrf import csrf_exempt # type: ignore
 from .models import User
 
 def signup_page(request):
