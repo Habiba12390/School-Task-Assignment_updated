@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render # type: ignore
 
 def admin_dashboard(request):
     return render(request, 'dashboard/Admin_dashboard.html')

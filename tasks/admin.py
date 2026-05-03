@@ -1,3 +1,5 @@
-from django.contrib import admin
+from django.contrib import admin # type: ignore
 
-# Register your models here.
+from .models import Task
+
+admin.site.register(Task)
