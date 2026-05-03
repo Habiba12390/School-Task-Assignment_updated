@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sign Up - YallaDo</title>
+  <link rel="stylesheet" href="{% static 'Sign_up.css' %}">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1><a href="/">YallaDo</a></h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/login/">Login</a>
+    </nav>
+  </header>
+
+  <!-- Main -->
+  <main>
+    <div class="signup-grid">
+
+      <!-- Left: Choose Role -->
+      <section class="role-section">
+        <h2>Start now by signing up!</h2>
+
+        <a href="#" class="role-card" onclick="openModal('teacher'); return false;">
+          <span>👩‍🏫 I'm a Teacher</span>
+          <span>›</span>
+        </a>
+
+        <a href="#" class="role-card" onclick="openModal('admin'); return false;">
+          <span>🛠️ I'm an Admin</span>
+          <span>›</span>
+        </a>
+
+        <p class="already-have">
+          Already have an account? <a href="/login/">Log in</a>
+        </p>
+      </section>
+
+      <!-- Right: Info Text -->
+      <section class="info-section">
+        <h3>Get Started with <span>YallaDo!</span></h3>
+        <p>Whether you're an admin or a teacher, <br> YallaDo makes school task management effortless.</p>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+    <div class="modal" id="modalBox" autocomplete="off">
+      <button class="close-btn" onclick="closeModal()">✕</button>
+      <div id="modalBadge"></div>
+      <h3 id="modalTitle"></h3>
+      <p id="modalSub"></p>
+
+      <label>Username</label>
+      <input type="text" id="inputUsername" placeholder="e.g. ahmed_mohamed" autocomplete="off" />
+
+      <label>Email</label>
+      <input type="email" id="inputEmail" placeholder="you@school.edu" autocomplete="off" />
+
+      <label>Password</label>
+      <input type="password" id="inputPassword" placeholder="••••••••" autocomplete="new-password" />
+
+      <label>Confirm Password</label>
+      <input type="password" id="inputConfirmPassword" placeholder="••••••••" autocomplete="new-password" />
+
+      <button class="submit-btn" onclick="handleSignup()">Create Account →</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <h3>Assign smart Not hard</h3>
+    <hr>
+    <p>
+      <a href="/about/">About Us</a>
+      <a href="/contact/">Contact Us</a>
+    </p>
+    <p>&copy; 2026 All Rights Reserved.</p>
+  </footer>
+
+  <script src="/static/Sign_up.js"></script>
+</body>
+</html>
