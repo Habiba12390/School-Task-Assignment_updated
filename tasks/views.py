@@ -25,7 +25,7 @@ def task_list(request):
             status=status.HTTP_400_BAD_REQUEST
         )
     
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def task_detail(request, task_id):
 
     try:
@@ -51,6 +51,10 @@ def task_detail(request, task_id):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+    elif request.method == 'DELETE':
+        task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 def add_task_page(request):
     return render(request, 'tasks/Add_Task.html')

@@ -62,7 +62,7 @@ async function handleSignup() {
   }
 
   try {
-    const response = await fetch('/api/signup/', {
+    const response = await fetch('http://127.0.0.1:8000/api/signup-api/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password, confirm_password: confirmPassword, role: selectedRole })
@@ -76,9 +76,9 @@ async function handleSignup() {
     }
 
     if (data.role === 'admin') {
-      window.location.href = '/admin-dashboard/';
+      window.location.href = 'Admin_dashboard.html';
     } else {
-      window.location.href = '/teacher-dashboard/';
+      window.location.href = 'Teacher_dashboard.html';
     }
 
   } catch (err) {

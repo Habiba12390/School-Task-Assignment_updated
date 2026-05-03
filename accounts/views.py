@@ -36,3 +36,21 @@ def signup(request):
         return JsonResponse({'success': True, 'role': role})
 
     return JsonResponse({'error': 'Invalid method.'}, status=405)
+
+@csrf_exempt
+def login_view(request):
+    if request.method == 'POST':
+        data     = json.loads(request.body)
+        email    = data.get('email', '').strip().lower()
+        password = data.get('password', '').strip()
+
+        if not email or not password:
+            return JsonResponse({'error': 'Email and password are required.'}, status=400)
+
+        try:
+            user = User.objects.get(email=email, password=password)
+            return JsonResponse({'success': True, 'role': user.role, 'name': user.username})
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Invalid email or password.'}, status=400)
+
+    return JsonResponse({'error': 'Invalid method.'}, status=405)
