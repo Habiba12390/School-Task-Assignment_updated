@@ -10,17 +10,17 @@
 
     <header>
         <nav>
-                <div class="nav-left">
-                    <a href="Home.html" class="y-icon">Y</a>
-                    <a href="Home.html" class="logo-brand">YallaDo</a>
-                </div>
-                
-                   <div class="nav-right">
-            <a href="Home.html" >Home</a>
-        </div>
-            
+            <div class="nav-left">
+                <a href="Home.html" class="y-icon">Y</a>
+                <a href="Home.html" class="logo-brand">YallaDo</a>
+            </div>
 
-   
+            <div class="nav-right">
+                <a href="Home.html">Home</a>
+            </div>
+
+
+
         </nav>
     </header>
 
@@ -28,7 +28,8 @@
         <h2>Contact Us</h2>
         <p>Do you have an inquiry or a problem with the system? Send us a message below.</p>
 
-        <form action="Home.html">
+        <form id="contactForm">
+            {% csrf_token %}
             <p>
                 <label for="name">Full Name:</label><br>
                 <input type="text" id="name" name="name" placeholder="Enter your full name" required size="40">
@@ -50,13 +51,13 @@
     </main>
 
     <footer>
-            <h3>Assign smart Not hard</h3>
-            <hr>
-            <p>
-                <a href="About_us.html">About Us</a>
-                <a href="Contact.html">Contact Us</a>
-            </p>
-            <p>&copy; 2026 All Rights Reserved.</p>
+        <h3>Assign smart Not hard</h3>
+        <hr>
+        <p>
+            <a href="About_us.html">About Us</a>
+            <a href="Contact.html">Contact Us</a>
+        </p>
+        <p>&copy; 2026 All Rights Reserved.</p>
     </footer>
 
 </body>
