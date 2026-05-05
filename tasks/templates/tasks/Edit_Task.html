@@ -5,26 +5,21 @@
 <meta charset="UTF-8">    
     <title>Edit Task - YallaDo</title>
     <link rel="stylesheet" href="{% static 'css/Edit_task.css' %}">
-    <script src="{% static 'js/Edit_task.js' %}" defer></script>
 </head>
 <body>
 
     <nav>
         <div class="nav-left">
-            <a href="Home.html" class="y-icon">Y</a>
-            <a href="Home.html" class="logo-brand">YallaDo</a>
+            <a href="/" class="y-icon">Y</a>
+            <a href="/" class="logo-brand">YallaDo</a>
         </div>
-
-        <div class="nav-center" id="nav-center">
-        </div>
-
+        <div class="nav-center" id="nav-center"></div>
         <div class="nav-right">
-            <a href="Home.html" class="logout-box">Logout</a>
+            <a href="/" class="logout-box">Logout</a>
         </div>
     </nav>
 
     <form id="editTaskForm">
-
         <label for="EditTask" class="large-label">Edit Task</label>
 
         <label for="task_ID">Task ID:</label>
@@ -67,10 +62,17 @@
         <h3>Assign smart Not hard</h3>
         <hr>
         <p>
-            <a href="About_us.html">About Us</a>
-            <a href="Contact.html">Contact Us</a>
+            <a href="/contact/">About Us</a>
+            <a href="/contact/">Contact Us</a>
         </p>
         <p>&copy; 2026 All Rights Reserved.</p>
     </footer>
+
+    <!-- Session data من Django -->
+    <script>
+        const LOGGED_NAME = "{{ request.session.user_name|default:'' }}";
+        const LOGGED_ROLE = "{{ request.session.user_role|default:'' }}";
+    </script>
+    <script src="{% static 'js/Edit_task.js' %}" defer></script>
 </body>
 </html>

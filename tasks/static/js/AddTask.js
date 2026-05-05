@@ -1,10 +1,7 @@
-const API = 'http://127.0.0.1:8000/api';
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('addTaskForm');
     if (!form) return;
 
-    const loggedName = localStorage.getItem('yallado_name') || 'Admin';
-    const loggedRole = localStorage.getItem('yallado_role') || '';
     const createdByInput = document.getElementById('created_by');
 
     // ====================== Dynamic Nav Bar ======================
@@ -12,20 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const navCenter = document.getElementById('nav-center');
         if (!navCenter) return;
 
-        if (loggedRole === 'admin') {
+        if (LOGGED_ROLE === 'admin') {
             navCenter.innerHTML = `
-                <a href="Admin_Dashboard.html">Admin Dashboard</a>
-                <a href="Task_details.html">Task Details</a>
-                <a href="Completed_tasks.html">Completed Tasks</a>
+                <a href="/api/dashboard/admin-dashboard/">Admin Dashboard</a>
+                <a href="/api/tasks/task-details/">Task Details</a>
+                <a href="/api/tasks/completed-tasks/">Completed Tasks</a>
             `;
-        } else {
         }
     }
 
     setupNavigation();
 
     if (createdByInput) {
-        createdByInput.value = loggedName;
+        createdByInput.value = LOGGED_NAME;
         createdByInput.readOnly = true;
         createdByInput.style.backgroundColor = '#f8fafc';
         createdByInput.style.cursor = 'not-allowed';
@@ -49,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('reset', function () {
         setTimeout(() => {
-            if (createdByInput) createdByInput.value = loggedName;
+            if (createdByInput) createdByInput.value = LOGGED_NAME;
         }, 10);
     });
 
@@ -68,12 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
             grade:        document.getElementById('grade').value.trim(),
             priority:     document.querySelector('input[name="priority"]:checked')?.value || 'medium',
             description:  document.getElementById('description').value.trim(),
-            created_by:   loggedName,
+            created_by:   LOGGED_NAME,
             status:       'Pending',
         };
 
         try {
-            const res = await fetch(`${API}/tasks/`, {
+            const res = await fetch('/api/tasks/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(taskData),
@@ -81,7 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (res.ok) {
                 showSuccessMessage('Task created successfully ✅');
-                setTimeout(() => { window.location.href = "Admin_Dashboard.html"; }, 1800);
+                setTimeout(() => {
+                    window.location.href = '/api/dashboard/admin-dashboard/';
+                }, 1800);
             } else {
                 const err = await res.json();
                 const message = err.task_ID

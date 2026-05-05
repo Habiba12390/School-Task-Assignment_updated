@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed Tasks - YallaDo</title>
+    <link rel="stylesheet" href="Completed_tasks.css">
+    <script src="Completed_tasks.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <a href="Home.html" class="y-icon">Y</a>
+            <a href="Home.html" class="logo-brand">YallaDo</a>
+        </div>
+        
+        <div class="nav-center" id="nav-center">
+        </div>
+
+        <div class="nav-right">
+            <a href="Home.html" class="logout-box">Logout</a>
+        </div>
+    </nav>
+
+    <main>
+        <h2>✅ Tasks Completed</h2>
+        <p class="page-subtitle">View all your completed tasks</p>
+
+        <div id="empty-state" class="empty-state-container" style="display: none;">
+            <div class="empty-icon">📋</div>
+            <p class="empty-title">No completed tasks yet.</p>
+            <p class="empty-subtitle">Once you mark tasks as done, they'll appear here.</p>
+            <a href="Task_details.html" class="empty-btn">View Active Tasks →</a>
+        </div>
+
+        <template id="task-card-template">
+            <div class="task-card completed">
+                <div class="header">
+                    <h3 class="task-title"></h3>
+                    <span class="task-status completed">✅ Completed</span>
+                </div>
+                <div class="task-details-grid">
+                    <div class="detail-item">
+                        <span class="detail-categoty">Task ID:</span>
+                        <span class="detail-value task-id"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-categoty">Teacher:</span>
+                        <span class="detail-value task-teacher"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-categoty">Priority:</span>
+                        <span class="priority task-priority"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-categoty">Status:</span>
+                        <span class="detail-value">✅ Task completed</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-categoty">Created by:</span>
+                        <span class="detail-value task-creator"></span>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </main>
+
+    <footer>
+        <h3>Assign smart Not hard</h3>
+        <hr>
+        <p>
+            <a href="About_us.html">About Us</a>
+            <a href="Contact.html">Contact Us</a>
+        </p>
+        <p>&copy; 2026 All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

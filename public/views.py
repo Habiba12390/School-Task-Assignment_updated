@@ -1,7 +1,7 @@
-from django.shortcuts import render # type: ignore
+from django.shortcuts import render
 
 def home(request):
-    return render(request, 'Home.html')
+    return render(request, 'home.html')
 
 def contact(request):
-    return render(request, 'Contact.html')
+    return render(request, 'contact.html')

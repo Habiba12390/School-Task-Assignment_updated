@@ -1,10 +1,7 @@
-const API = 'http://127.0.0.1:8000/api';
 document.addEventListener('DOMContentLoaded', async () => {
     const form = document.querySelector('form');
     if (!form) return;
 
-    const loggedName = localStorage.getItem('yallado_name') || 'Admin';
-    const loggedRole = localStorage.getItem('yallado_role') || '';
     const createdByInput = document.getElementById('created_by');
 
     // ====================== Dynamic Nav Bar ======================
@@ -12,14 +9,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const navCenter = document.getElementById('nav-center');
         if (!navCenter) return;
 
-        if (loggedRole === 'admin') {
+        if (LOGGED_ROLE === 'admin') {
             navCenter.innerHTML = `
-                <a href="Admin_Dashboard.html">Admin Dashboard</a>
-                <a href="Add_Task.html">Add New Task</a>
-                <a href="Task_details.html">Task Details</a>
-                <a href="Completed_tasks.html">Completed Tasks</a>
+                <a href="/api/dashboard/admin-dashboard/">Admin Dashboard</a>
+                <a href="/api/tasks/add-task/">Add New Task</a>
+                <a href="/api/tasks/task-details/">Task Details</a>
+                <a href="/api/tasks/completed-tasks/">Completed Tasks</a>
             `;
-        } else {
         }
     }
 
@@ -50,38 +46,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // ── Load task from backend ────────────────────────────────────────────────
+    // ── Load task ────────────────────────────────────────────────
     let currentTask;
     try {
-        const res = await fetch(`${API}/tasks/${taskID}/`);
+        const res = await fetch(`/api/tasks/${taskID}/`);
         if (!res.ok) {
-            showErrorMessage("The requested task does not exist or you don't have permission to edit it ❌");
+            showErrorMessage("The requested task does not exist ❌");
             setTimeout(() => window.history.back(), 1500);
             return;
         }
         currentTask = await res.json();
     } catch {
-        showErrorMessage("Could not reach the server. Make sure the backend is running ❌");
+        showErrorMessage("Could not reach the server ❌");
         setTimeout(() => window.history.back(), 1500);
         return;
     }
 
-    if (currentTask.created_by !== loggedName) {
+    if (currentTask.created_by !== LOGGED_NAME) {
         showErrorMessage("You don't have permission to edit this task ❌");
-        setTimeout(() => { window.location.href = "Admin_Dashboard.html"; }, 1500);
+        setTimeout(() => {
+            window.location.href = '/api/dashboard/admin-dashboard/';
+        }, 1500);
         return;
     }
 
-    // ── Populate form ─────────────────────────────────────────────────────────
-    document.getElementById('task_ID').value       = currentTask.task_ID;
-    document.getElementById('task_title').value    = currentTask.task_title || '';
-    document.getElementById('teacher_name').value  = currentTask.teacher_name || '';
-    document.getElementById('subject').value       = currentTask.subject || '';
-    document.getElementById('grade').value         = currentTask.grade || '';
-    document.getElementById('description').value   = currentTask.description || '';
+    // ── Populate form ─────────────────────────────────────────────
+    document.getElementById('task_ID').value      = currentTask.task_ID;
+    document.getElementById('task_title').value   = currentTask.task_title || '';
+    document.getElementById('teacher_name').value = currentTask.teacher_name || '';
+    document.getElementById('subject').value      = currentTask.subject || '';
+    document.getElementById('grade').value        = currentTask.grade || '';
+    document.getElementById('description').value  = currentTask.description || '';
 
     if (createdByInput) {
-        createdByInput.value = currentTask.created_by || loggedName;
+        createdByInput.value = currentTask.created_by || LOGGED_NAME;
         createdByInput.readOnly = true;
         createdByInput.style.backgroundColor = '#f8fafc';
         createdByInput.style.cursor = 'not-allowed';
@@ -94,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // ── Submit ────────────────────────────────────────────────────────────────
+    // ── Submit ────────────────────────────────────────────────────
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
@@ -108,7 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         try {
-            const res = await fetch(`${API}/tasks/${taskID}/`, {
+            const res = await fetch(`/api/tasks/${taskID}/`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updates),
@@ -116,12 +114,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (res.ok) {
                 showSuccessMessage('Task updated successfully ✅');
-                setTimeout(() => { window.location.href = "Admin_Dashboard.html"; }, 2500);
+                setTimeout(() => {
+                    window.location.href = '/api/dashboard/admin-dashboard/';
+                }, 2500);
             } else {
-                showErrorMessage('Failed to update task. Please check all fields ❌');
+                showErrorMessage('Failed to update task ❌');
             }
         } catch {
-            showErrorMessage('Could not reach the server. Make sure the backend is running ❌');
+            showErrorMessage('Could not reach the server ❌');
         }
     });
 });

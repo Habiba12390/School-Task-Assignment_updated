@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Task - YallaDo</title>
+    <link rel="stylesheet" href="EditTask.css">
+    <script src="EditTask.js" defer></script>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-left">
+            <a href="Home.html" class="y-icon">Y</a>
+            <a href="Home.html" class="logo-brand">YallaDo</a>
+        </div>
+
+        <div class="nav-center" id="nav-center">
+        </div>
+
+        <div class="nav-right">
+            <a href="Home.html" class="logout-box">Logout</a>
+        </div>
+    </nav>
+
+    <form action="admin_tasks_list.html" method="post">
+
+        <label for="EditTask" class="large-label">Edit Task</label>
+
+        <label for="task_ID">Task ID:</label>
+        <input type="text" id="task_ID" name="task_ID_display" required readonly>
+
+        <label for="task_title">Task Title:</label>
+        <input type="text" id="task_title" name="task_title" required>
+
+        <label for="teacher_name">Teacher Name:</label>
+        <input type="text" id="teacher_name" name="teacher_name" required>
+
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" required>
+
+        <label for="grade">Grade:</label>
+        <input type="text" id="grade" name="grade" required>
+
+        <label>Priority:</label>
+        <input type="radio" id="low" name="priority" value="low" required>
+        <label for="low">Low</label>
+        <input type="radio" id="medium" name="priority" value="medium">
+        <label for="medium">Medium</label>
+        <input type="radio" id="high" name="priority" value="high">
+        <label for="high">High</label><br><br>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="5" cols="60" required></textarea>
+
+        <label for="created_by">Created By:</label>
+        <input type="text" id="created_by" name="created_by" readonly>
+
+        <div class="button-group">
+            <button type="submit"> ✔ Save </button>
+            <button type="reset"> ↻ Reset</button>
+            <button type="button" onclick="window.history.back()"> X Cancel</button>
+        </div>
+    </form>
+
+    <footer>
+        <h3>Assign smart Not hard</h3>
+        <hr>
+        <p>
+            <a href="About_us.html">About Us</a>
+            <a href="Contact.html">Contact Us</a>
+        </p>
+        <p>&copy; 2026 All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>YallaDo</title>
+  <link rel="stylesheet" href="{% static 'Home.css' %}">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+
+    <div class="explore-wrap">
+      <button id="exploreBtn" onclick="toggleExplore()">Explore ▾</button>
+      <div class="explore-dropdown" id="exploreDropdown">
+
+        <div class="subject-item">
+          <div class="subject-header" onmouseenter="showTasks('math')">📐 Mathematics ›</div>
+          <div class="tasks-panel" id="tasks-math">
+            <div class="task-row"><span>1st Secondary</span><div id="actions-math-1"></div></div>
+            <div class="task-row"><span>2nd Secondary</span><div id="actions-math-2"></div></div>
+            <div class="task-row"><span>3rd Secondary</span><div id="actions-math-3"></div></div>
+          </div>
+        </div>
+
+        <div class="subject-item">
+          <div class="subject-header" onmouseenter="showTasks('arabic')">📖 Arabic ›</div>
+          <div class="tasks-panel" id="tasks-arabic">
+            <div class="task-row"><span>1st Secondary</span><div id="actions-arabic-1"></div></div>
+            <div class="task-row"><span>2nd Secondary</span><div id="actions-arabic-2"></div></div>
+            <div class="task-row"><span>3rd Secondary</span><div id="actions-arabic-3"></div></div>
+          </div>
+        </div>
+
+        <div class="subject-item">
+          <div class="subject-header" onmouseenter="showTasks('english')">🌍 English ›</div>
+          <div class="tasks-panel" id="tasks-english">
+            <div class="task-row"><span>1st Secondary</span><div id="actions-english-1"></div></div>
+            <div class="task-row"><span>2nd Secondary</span><div id="actions-english-2"></div></div>
+            <div class="task-row"><span>3rd Secondary</span><div id="actions-english-3"></div></div>
+          </div>
+        </div>
+
+        <div class="subject-item">
+          <div class="subject-header" onmouseenter="showTasks('biology')">🧬 Biology ›</div>
+          <div class="tasks-panel" id="tasks-biology">
+            <div class="task-row"><span>1st Secondary</span><div id="actions-biology-1"></div></div>
+            <div class="task-row"><span>2nd Secondary</span><div id="actions-biology-2"></div></div>
+            <div class="task-row"><span>3rd Secondary</span><div id="actions-biology-3"></div></div>
+          </div>
+        </div>
+
+        <div class="subject-item">
+          <div class="subject-header" onmouseenter="showTasks('physics')">⚡ Physics ›</div>
+          <div class="tasks-panel" id="tasks-physics">
+            <div class="task-row"><span>1st Secondary</span><div id="actions-physics-1"></div></div>
+            <div class="task-row"><span>2nd Secondary</span><div id="actions-physics-2"></div></div>
+            <div class="task-row"><span>3rd Secondary</span><div id="actions-physics-3"></div></div>
+          </div>
+        </div>
+
+        <div class="subject-item">
+          <div class="subject-header" onmouseenter="showTasks('chemistry')">🧪 Chemistry ›</div>
+          <div class="tasks-panel" id="tasks-chemistry">
+            <div class="task-row"><span>1st Secondary</span><div id="actions-chemistry-1"></div></div>
+            <div class="task-row"><span>2nd Secondary</span><div id="actions-chemistry-2"></div></div>
+            <div class="task-row"><span>3rd Secondary</span><div id="actions-chemistry-3"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <h1><a href="/">YallaDo</a></h1>
+
+    <nav>
+      <a href="/login/">Login</a>
+      <a href="/signup/">Sign Up</a>
+    </nav>
+
+  </header>
+
+  <!-- Hero Top: Text + Buttons -->
+  <section class="hero-top">
+    <h2>Welcome to <span>YallaDo!</span></h2>
+    <p>Manage school tasks easily with our system.<br>
+       Admins can create tasks and assign them to teachers,<br>
+       while teachers can view and complete their tasks efficiently.
+    </p>
+    <div class="hero-btns">
+      <a href="/signup/" class="btn-primary">Get Started</a>
+      <a href="/login/" class="btn-outline">Log In</a>
+    </div>
+  </section>
+
+  <!-- Hero Bottom: Big Card with Image -->
+  <section class="hero-card">
+    <div class="hero-card-inner">
+      <div class="hero-card-img">
+        <img src="{% static 'image.png' %}" alt="YallaDo Illustration" />
+      </div>
+      <div class="hero-card-text">
+        <h3>The Smart Task Management System Built For Schools</h3>
+        <p>Assign tasks to teachers, track progress, and keep your school organized — all in one place.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <h3>Assign smart, not hard</h3>
+    <hr>
+    <p>
+      <a href="/about/">About Us</a>
+      <a href="/contact/">Contact Us</a>
+    </p>
+    <p>&copy; 2026 All Rights Reserved.</p>
+  </footer>
+
+  <script src="{% static 'Home.js' %}"></script>
+</body>
+</html>
