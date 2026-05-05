@@ -52,7 +52,25 @@ def login_view(request):
 
         try:
             user = User.objects.get(email=email, password=password)
-            return JsonResponse({'success': True, 'role': user.role, 'name': user.username})
+
+            # Store user info in Django session (server-side)
+            request.session['user_id']    = user.id
+            request.session['user_role']  = user.role
+            request.session['user_email'] = user.email
+            request.session['user_name']  = user.username
+
+            # Determine redirect URL based on role
+            if user.role == 'admin':
+                redirect_url = '/api/dashboard/admin-dashboard/'
+            else:
+                redirect_url = '/api/dashboard/teacher-dashboard/'
+
+            return JsonResponse({
+                'success': True,
+                'role': user.role,
+                'name': user.username,
+                'redirect_url': redirect_url,
+            })
         except User.DoesNotExist:
             return JsonResponse({'error': 'Invalid email or password.'}, status=400)
 

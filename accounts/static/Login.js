@@ -9,10 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const email    = document.getElementById('user_email').value.trim().toLowerCase();
     const password = document.getElementById('password').value.trim();
 
+    // Get the CSRF token from the meta tag injected by Django
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
     try {
       const response = await fetch(`${API}/login/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        credentials: 'same-origin',   
         body: JSON.stringify({ email, password }),
       });
 
@@ -23,15 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      localStorage.setItem('yallado_role',  data.role);
-      localStorage.setItem('yallado_email', email);
-      localStorage.setItem('yallado_name',  data.name);
-
-      if (data.role === 'admin') {
-        window.location.href = '/api/dashboard/admin-dashboard/';
-      } else {
-        window.location.href = '/api/dashboard/teacher-dashboard/';
-      }
+      // Redirect using the URL returned by the server (not localStorage)
+      window.location.href = data.redirect_url;
 
     } catch (err) {
       alert('Could not reach the server. Make sure the backend is running.');
