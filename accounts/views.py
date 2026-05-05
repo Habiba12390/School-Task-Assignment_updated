@@ -7,6 +7,9 @@ from .models import User
 def signup_page(request):
     return render(request, 'Sign_up.html')
 
+def login_page(request):
+    return render(request, 'login.html')
+
 @csrf_exempt
 def signup(request):
     if request.method == 'POST':

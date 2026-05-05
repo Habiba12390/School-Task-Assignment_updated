@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('yallado_name',  data.name);
 
       if (data.role === 'admin') {
-        window.location.href = 'Admin_dashboard.html';
+        window.location.href = '/api/dashboard/admin-dashboard/';
       } else {
-        window.location.href = 'Teacher_dashboard.html';
+        window.location.href = '/api/dashboard/teacher-dashboard/';
       }
 
     } catch (err) {
