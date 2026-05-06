@@ -35,8 +35,29 @@ def signup(request):
         if role not in ['admin', 'teacher']:
             return JsonResponse({'error': 'Invalid role.'}, status=400)
 
-        User.objects.create(username=username, email=email, password=password, role=role)
-        return JsonResponse({'success': True, 'role': role})
+        # Create the user with a hashed password
+        user = User(username=username, email=email, role=role)
+        user.set_password(password)   # hashes before saving
+        user.save()
+
+        # Log the new user in immediately (set session)
+        request.session['user_id']    = user.id
+        request.session['user_role']  = user.role
+        request.session['user_email'] = user.email
+        request.session['user_name']  = user.username
+
+        # Determine redirect URL based on role
+        if user.role == 'admin':
+            redirect_url = '/api/dashboard/admin-dashboard/'
+        else:
+            redirect_url = '/api/dashboard/teacher-dashboard/'
+
+        return JsonResponse({
+            'success': True,
+            'role': user.role,
+            'name': user.username,
+            'redirect_url': redirect_url,
+        })
 
     return JsonResponse({'error': 'Invalid method.'}, status=405)
 
@@ -51,27 +72,37 @@ def login_view(request):
             return JsonResponse({'error': 'Email and password are required.'}, status=400)
 
         try:
-            user = User.objects.get(email=email, password=password)
-
-            # Store user info in Django session (server-side)
-            request.session['user_id']    = user.id
-            request.session['user_role']  = user.role
-            request.session['user_email'] = user.email
-            request.session['user_name']  = user.username
-
-            # Determine redirect URL based on role
-            if user.role == 'admin':
-                redirect_url = '/api/dashboard/admin-dashboard/'
-            else:
-                redirect_url = '/api/dashboard/teacher-dashboard/'
-
-            return JsonResponse({
-                'success': True,
-                'role': user.role,
-                'name': user.username,
-                'redirect_url': redirect_url,
-            })
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             return JsonResponse({'error': 'Invalid email or password.'}, status=400)
+
+        # Secure password check against the stored hash
+        if not user.check_password(password):
+            # Fallback for old plain-text passwords (migration)
+            if user.password == password:
+                # Password matches plain text, let's hash it now for future security
+                user.set_password(password)
+                user.save()
+            else:
+                return JsonResponse({'error': 'Invalid email or password.'}, status=400)
+
+        # Store user info in Django session (server-side)
+        request.session['user_id']    = user.id
+        request.session['user_role']  = user.role
+        request.session['user_email'] = user.email
+        request.session['user_name']  = user.username
+
+        # Determine redirect URL based on role
+        if user.role == 'admin':
+            redirect_url = '/api/dashboard/admin-dashboard/'
+        else:
+            redirect_url = '/api/dashboard/teacher-dashboard/'
+
+        return JsonResponse({
+            'success': True,
+            'role': user.role,
+            'name': user.username,
+            'redirect_url': redirect_url,
+        })
 
     return JsonResponse({'error': 'Invalid method.'}, status=405)

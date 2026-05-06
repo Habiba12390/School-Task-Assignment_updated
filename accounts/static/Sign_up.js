@@ -61,10 +61,19 @@ async function handleSignup() {
     return;
   }
 
+  const csrfToken = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1] || '';
+
   try {
     const response = await fetch('/signup-api/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      credentials: 'same-origin',
       body: JSON.stringify({ username, email, password, confirm_password: confirmPassword, role: selectedRole })
     });
 
@@ -75,11 +84,8 @@ async function handleSignup() {
       return;
     }
 
-    if (data.role === 'admin') {
-      window.location.href = '/api/dashboard/admin-dashboard/';
-    } else {
-      window.location.href = '/api/dashboard/teacher-dashboard/';
-    }
+    // Use the redirect URL provided by the server
+    window.location.href = data.redirect_url;
 
   } catch (err) {
     alert('Something went wrong. Please try again.');
