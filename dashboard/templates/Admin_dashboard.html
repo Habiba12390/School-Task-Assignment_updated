@@ -1,23 +1,23 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard - YallaDo</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
     <header>
-        <a href="Home.html" class="logo-container">
+        <a href="/home/" class="logo-container">
             <div class="logo-icon">Y</div>
             <span class="logo-text">YallaDo</span>
         </a>
 
         <nav class="nav-center" id="nav-center">
-            <!-- Populated dynamically by Admin_dashboard.js based on role -->
-        </nav>
+            </nav>
 
         <div class="nav-right">
-            <a href="Home.html" class="logout-box">Logout</a>
+            <a href="/logout/" class="logout-box">Logout</a>
         </div>
     </header>
 
@@ -27,7 +27,7 @@
                 <h2>Welcome, Admin!</h2>
                 <p style="color: #666;">Manage and oversee all school tasks.</p>
             </div>
-            <a href="Add_Task.html">
+            <a href="/add-task/">
                 <button class="creat-box">+ Create New Task</button>
             </a>
         </div>
@@ -53,12 +53,12 @@
         <h3>Assign smart Not hard</h3>
         <hr>
         <p>
-            <a href="About_us.html">About Us</a>
-            <a href="Contact.html">Contact Us</a>
+            <a href="/about/">About Us</a>
+            <a href="/contact/">Contact Us</a>
         </p>
         <p>&copy; 2026 All Rights Reserved.</p>
     </footer>
 
-    <script src="Admin_dashboard.js"></script>
+    <script src="{% static 'Admin_dashboard.js' %}"></script>
 </body>
 </html>
