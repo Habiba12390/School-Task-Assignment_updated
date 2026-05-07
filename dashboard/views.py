@@ -50,3 +50,30 @@ def teacher_complete_task(request, task_id):
         return JsonResponse({"success": True})
     except Task.DoesNotExist:
         return JsonResponse({"error": "Task not found"}, status=404)
+
+
+def get_admin_tasks(request):
+    """API to fetch tasks for Admin via AJAX"""
+    if not request.session.get("user_id") or request.session.get("user_role") != "admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    
+    admin_name = request.session.get("user_name", "")
+    
+    if request.method == 'GET':
+        tasks = Task.objects.filter(created_by=admin_name).exclude(status='Completed').values(
+            'task_ID', 'task_title', 'teacher_name', 'priority', 'description'
+        )
+        return JsonResponse({'tasks': list(tasks)})
+
+def admin_delete_task(request, task_id):
+    """API to delete a task via AJAX"""
+    if not request.session.get("user_id") or request.session.get("user_role") != "admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+        
+    if request.method == 'DELETE':
+        try:
+            task = Task.objects.get(task_ID=task_id)
+            task.delete()
+            return JsonResponse({'success': True})
+        except Task.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Task not found'})
