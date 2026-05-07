@@ -1,54 +1,194 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard - YallaDo</title>
-    <link rel="stylesheet" href="Teacher_dashboard.css">
-    <script src="Teacher_dashboard.js" defer></script>
+    <link rel="stylesheet" href="{% static 'Teacher_dashboard.css' %}">
 </head>
 <body>
     <nav>
         <div class="nav-left">
-            <a href="Home.html" class="y-icon">Y</a>
-            <a href="Home.html" class="logo-brand">YallaDo</a>
+            <a href="/" class="y-icon">Y</a>
+            <a href="/" class="logo-brand">YallaDo</a>
         </div>
-
-        <div class="nav-center" id="nav-center">
+        <div class="nav-center">
+            <a href="/api/tasks/task-details/{{ request.session.user_name }}/">Task Details</a>
+            <a href="/api/tasks/completed-tasks/">Completed Tasks</a>
         </div>
-
         <div class="nav-right">
-            <a href="Home.html" class="logout-box">Logout</a>
+            <a href="/logout/" class="logout-box">Logout</a>
         </div>
     </nav>
 
     <main>
-        <h2>Hello, Teacher! 👋</h2>
-        <p>Here are all tasks assigned to you:</p>
+        <h2>Hello, {{ teacher_name }}! 👋</h2>
+        <p>
+            Here are all tasks assigned to you
+            {% if task_count > 0 %}
+                — <strong>{{ task_count }}</strong> active task{{ task_count|pluralize }}
+            {% endif %}
+        </p>
 
-        <form method="get">
-            <input type="search" id="search" name="search" placeholder="Search by (Priority)..."
-                aria-label="Search through this site content" list="options">
-            <button type="submit">Submit</button>
+        <!-- Search / Filter Form -->
+        <form method="get" action="">
+            <input
+                type="search"
+                id="search"
+                name="priority"
+                placeholder="Filter by priority..."
+                value="{{ priority_filter }}"
+                list="options"
+            >
+            <button type="submit">Search</button>
+            {% if priority_filter %}
+                <a href="?" class="btn-clear">✕ Clear</a>
+            {% endif %}
 
             <datalist id="options">
-                <option value="High"></option>
-                <option value="Medium"></option>
-                <option value="Low"></option>
+                <option value="high"></option>
+                <option value="medium"></option>
+                <option value="low"></option>
             </datalist>
         </form>
 
-        <div id="task-list-container" class="task-list-container"></div>
+        <!-- Task Cards -->
+        <div id="task-list-container" class="task-list-container">
+            {% if tasks %}
+                {% for task in tasks %}
+                <div class="task-card">
+                    <div class="task-header">
+                        <h3 class="task-title">{{ task.task_title }}</h3>
+                        <span class="task-status">🔄 Ongoing</span>
+                    </div>
+
+                    <div class="task-grid">
+                        <div><span class="task-label">Task ID:</span>
+                             <span class="task-value">{{ task.task_ID }}</span></div>
+
+                        <div><span class="task-label">Subject:</span>
+                             <span class="task-value">{{ task.subject }}</span></div>
+
+                        <div><span class="task-label">Priority:</span>
+                             <span class="task-value-wrapper">
+                                 <span class="badge badge-{{ task.priority|lower }}">
+                                     {{ task.priority|capfirst }}
+                                 </span>
+                             </span></div>
+
+                        <div><span class="task-label">Created by:</span>
+                             <span class="task-value">{{ task.created_by }}</span></div>
+
+                        <div><span class="task-label">Grade:</span>
+                             <span class="task-value">{{ task.grade }}</span></div>
+
+                        <div><span class="task-label">Status:</span>
+                             <span class="task-value">{{ task.status }}</span></div>
+                    </div>
+
+                    <div class="task-footer">
+                        <a href="/api/tasks/task-details/{{ task.task_ID }}/" class="btn-details">
+                            📋 View Details →
+                        </a>
+                        <button
+                            class="btn-complete"
+                            data-task-id="{{ task.task_ID }}"
+                            onclick="markComplete(this)"
+                        >
+                            ✅ Mark as Completed
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <p class="empty-state-title">
+                        {% if priority_filter %}
+                            No {{ priority_filter }} priority tasks found
+                        {% else %}
+                            No tasks assigned to you yet
+                        {% endif %}
+                    </p>
+                    <p class="empty-state-text">
+                        {% if priority_filter %}
+                            Try another priority or <a href="?">clear the filter</a>.
+                        {% else %}
+                            Tasks assigned to you will appear here.
+                        {% endif %}
+                    </p>
+                </div>
+            {% endif %}
+        </div>
     </main>
 
     <footer>
         <h3>Assign smart Not hard</h3>
         <hr>
         <p>
-            <a href="About_us.html">About Us</a>
-            <a href="Contact.html">Contact Us</a>
+            <a href="/about/">About Us</a>
+            <a href="/contact/">Contact Us</a>
         </p>
         <p>&copy; 2026 All Rights Reserved.</p>
     </footer>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                document.cookie.split(';').forEach(cookie => {
+                    const c = cookie.trim();
+                    if (c.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(c.slice(name.length + 1));
+                    }
+                });
+            }
+            return cookieValue;
+        }
+
+        async function markComplete(btn) {
+            const taskId = btn.dataset.taskId;
+            btn.disabled = true;
+            btn.textContent = '⏳ Saving...';
+
+            try {
+                const res = await fetch(`/api/dashboard/teacher-complete/${taskId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    const card = btn.closest('.task-card');
+                    card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(30px)';
+                    setTimeout(() => card.remove(), 400);
+
+                    // Update counter
+                    const p = document.querySelector('main > p');
+                    if (p) {
+                        const current = document.querySelectorAll('.task-card').length - 1;
+                        p.innerHTML = current > 0
+                            ? `Here are all tasks assigned to you — <strong>${current}</strong> active task${current !== 1 ? 's' : ''}`
+                            : 'Here are all tasks assigned to you';
+                    }
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = '✅ Mark as Completed';
+                    alert(data.error || 'Something went wrong.');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = '✅ Mark as Completed';
+                alert('Network error. Please try again.');
+            }
+        }
+    </script>
 </body>
 </html>
