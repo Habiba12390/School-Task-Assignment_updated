@@ -1,7 +1,8 @@
-from django.urls import path # type: ignore
+from django.urls import path  # type: ignore
 from . import views
 
 urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard),
     path('teacher-dashboard/', views.teacher_dashboard),
+    path('teacher-complete/<str:task_id>/', views.teacher_complete_task),
 ]
