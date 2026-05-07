@@ -22,15 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const navCenter = document.getElementById('nav-center');
         if (!navCenter) return;
         navCenter.innerHTML = `
-            <a href="/add-task/" class="nav-link">Add New Task</a>
-            <a href="/task-details/" class="nav-link">Task Details</a>
-            <a href="/completed-tasks/" class="nav-link">Completed Tasks</a>
+            <a href="/api/tasks/add-task/" class="nav-link">Add New Task</a>
+            <a href="/api/tasks/task-details/" class="nav-link">Task Details</a>
+            <a href="/api/tasks/completed-tasks/" class="nav-link">Completed Tasks</a>
         `;
     }
 
     // ====================== Fetch & Render Tasks ======================
     function fetchTasks() {
-        fetch('/dashboard/api/admin-tasks/')
+        fetch('/api/dashboard/api/admin-tasks/')
             .then(response => response.json())
             .then(data => {
                 renderTasks(data.tasks);
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="priority ${priorityClass}">${task.priority || 'Low'}</span></td>
                 <td>${task.description || ''}</td>
                 <td class="actions-cell">
-                    <a href="/edit-task/${task.task_ID}/" class="btn btn-edit">Edit</a>
+                    <a href="/api/tasks/edit-task/?task_ID=${task.task_ID}" class="btn btn-edit">Edit</a>
                     <button class="btn btn-delete" data-task-id="${task.task_ID}" style="cursor:pointer;">Delete</button>
                 </td>
             `;
@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!confirm('Are you sure you want to delete this task?')) return;
 
                 const taskID = this.getAttribute('data-task-id');
-                
-                fetch(`/dashboard/api/delete-task/${taskID}/`, {
+
+                fetch(`/api/dashboard/api/delete-task/${taskID}/`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': getCookie('csrftoken'),
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        fetchTasks(); 
+                        fetchTasks();
                     } else {
                         alert('Error deleting task!');
                     }
@@ -103,5 +103,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setupNavigation();
-    fetchTasks(); 
+    fetchTasks();
 });

@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isSubmitting = true;
 
         const taskData = {
-            task_ID:      document.getElementById('task_ID').value.trim(),
+            // ✅ task_ID اتشالت، Django هيحطها تلقائي
             task_title:   document.getElementById('task_title').value.trim(),
             teacher_name: document.getElementById('teacher_name').value.trim(),
             subject:      document.getElementById('subject').value.trim(),
@@ -82,10 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 1800);
             } else {
                 const err = await res.json();
-                const message = err.task_ID
-                    ? 'A task with this ID already exists ❌'
-                    : 'Failed to create task. Please check all fields ❌';
-                showErrorMessage(message);
+                showErrorMessage('Failed to create task. Please check all fields ❌');
                 isSubmitting = false;
             }
         } catch {

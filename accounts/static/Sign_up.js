@@ -84,7 +84,7 @@ async function handleSignup() {
       return;
     }
 
-    // Use the redirect URL provided by the server
+    // ✅ redirect_url جاية من السيرفر
     window.location.href = data.redirect_url;
 
   } catch (err) {

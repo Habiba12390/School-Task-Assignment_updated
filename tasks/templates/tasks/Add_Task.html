@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"> 
-   <title>Add New Task - YallaDo</title>
-    <link rel="stylesheet" href="{% static 'css/Add_task.css' %}">
+    <meta charset="UTF-8"> 
+    <title>Add New Task - YallaDo</title>
+    <link rel="stylesheet" href="{% static 'css/AddTask.css' %}">
 </head>
 
 <body>
@@ -22,9 +22,6 @@
 
     <form id="addTaskForm">
         <label class="large-label">Add New Task</label>
-
-        <label for="task_ID">Task ID:</label>
-        <input type="text" id="task_ID" name="task_ID" required placeholder="e.g., TASK-001"><br>
 
         <label for="task_title">Task Title:</label>
         <input type="text" id="task_title" name="task_title" required placeholder="e.g., Grade Papers"><br>
@@ -70,11 +67,10 @@
         <p>&copy; 2026 All Rights Reserved.</p>
     </footer>
 
-    <!-- Session data من Django -->
     <script>
         const LOGGED_NAME = "{{ request.session.user_name|default:'' }}";
         const LOGGED_ROLE = "{{ request.session.user_role|default:'' }}";
     </script>
-    <script src="{% static 'js/Add_task.js' %}" defer></script>
+    <script src="{% static 'js/AddTask.js' %}" defer></script>
 </body>
 </html>

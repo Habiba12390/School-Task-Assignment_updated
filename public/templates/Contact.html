@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="Contact.css">
-    <script src="Contact.js" defer></script>
+    <link rel="stylesheet" href="{% static 'Contact.css' %}">
+    <script src="{% static 'Contact.js' %}" defer></script>
     <title>Contact Us - School Task Assignment</title>
 </head>
 <body>
@@ -11,15 +12,13 @@
     <header>
         <nav>
             <div class="nav-left">
-                <a href="Home.html" class="y-icon">Y</a>
-                <a href="Home.html" class="logo-brand">YallaDo</a>
+                <a href="/" class="y-icon">Y</a>
+                <a href="/" class="logo-brand">YallaDo</a>
             </div>
 
             <div class="nav-right">
-                <a href="Home.html">Home</a>
+                <a href="/">Home</a>
             </div>
-
-
 
         </nav>
     </header>
@@ -54,8 +53,8 @@
         <h3>Assign smart Not hard</h3>
         <hr>
         <p>
-            <a href="About_us.html">About Us</a>
-            <a href="Contact.html">Contact Us</a>
+            <a href="/about/">About Us</a>
+            <a href="/contact/">Contact Us</a>
         </p>
         <p>&copy; 2026 All Rights Reserved.</p>
     </footer>
