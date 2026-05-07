@@ -1,6 +1,6 @@
 import json
 from django.http import JsonResponse # type: ignore
-from django.shortcuts import render # type: ignore
+from django.shortcuts import render, redirect # type: ignore
 from django.views.decorators.csrf import csrf_exempt # type: ignore
 from .models import User
 
@@ -78,9 +78,7 @@ def login_view(request):
 
         # Secure password check against the stored hash
         if not user.check_password(password):
-            # Fallback for old plain-text passwords (migration)
             if user.password == password:
-                # Password matches plain text, let's hash it now for future security
                 user.set_password(password)
                 user.save()
             else:
@@ -106,3 +104,7 @@ def login_view(request):
         })
 
     return JsonResponse({'error': 'Invalid method.'}, status=405)
+
+def logout_view(request):
+    request.session.flush()
+    return redirect('/login/')
