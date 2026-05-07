@@ -2,34 +2,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableBody = document.getElementById('task-table-body');
     if (!tableBody) return;
 
-    const loggedName = localStorage.getItem('yallado_name') || '';
-    const loggedRole = localStorage.getItem('yallado_role') || '';
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
     // ====================== Dynamic Nav Bar ======================
     function setupNavigation() {
         const navCenter = document.getElementById('nav-center');
         if (!navCenter) return;
-
-        if (loggedRole === 'admin') {
-            navCenter.innerHTML = `
-                <a href="Add_Task.html" class="nav-link">Add New Task</a>
-                <a href="Task_details.html" class="nav-link">Task Details</a>
-                <a href="Completed_tasks.html" class="nav-link">Completed Tasks</a>
-            `;
-        } else if (loggedRole === 'teacher') {
-            window.location.href = "Teacher_Dashboard.html";
-        }
+        navCenter.innerHTML = `
+            <a href="/add-task/" class="nav-link">Add New Task</a>
+            <a href="/task-details/" class="nav-link">Task Details</a>
+            <a href="/completed-tasks/" class="nav-link">Completed Tasks</a>
+        `;
     }
 
-    // ====================== Render Tasks ======================
-    function renderTasks() {
+    // ====================== Fetch & Render Tasks ======================
+    function fetchTasks() {
+        fetch('/dashboard/api/admin-tasks/')
+            .then(response => response.json())
+            .then(data => {
+                renderTasks(data.tasks);
+            })
+            .catch(error => console.error('Error fetching tasks:', error));
+    }
+
+    function renderTasks(tasks) {
         tableBody.innerHTML = '';
-
-        let allTasks = JSON.parse(localStorage.getItem('yallado_tasks')) || [];
-
-        let tasks = allTasks.filter(task =>
-            task.created_by === loggedName && task.status !== "Completed"
-        );
 
         if (tasks.length === 0) {
             tableBody.innerHTML = `
@@ -54,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="priority ${priorityClass}">${task.priority || 'Low'}</span></td>
                 <td>${task.description || ''}</td>
                 <td class="actions-cell">
-                    <a href="Edit_Task.html?task_ID=${encodeURIComponent(task.task_ID)}" class="btn btn-edit">Edit</a>
+                    <a href="/edit-task/${task.task_ID}/" class="btn btn-edit">Edit</a>
                     <button class="btn btn-delete" data-task-id="${task.task_ID}" style="cursor:pointer;">Delete</button>
                 </td>
             `;
@@ -64,20 +74,34 @@ document.addEventListener('DOMContentLoaded', () => {
         attachDeleteEvents();
     }
 
+    // ====================== Delete Task (AJAX) ======================
     function attachDeleteEvents() {
         document.querySelectorAll('.btn-delete').forEach(button => {
             button.addEventListener('click', function () {
                 if (!confirm('Are you sure you want to delete this task?')) return;
 
                 const taskID = this.getAttribute('data-task-id');
-                let tasks = JSON.parse(localStorage.getItem('yallado_tasks')) || [];
-                tasks = tasks.filter(t => t.task_ID !== taskID);
-                localStorage.setItem('yallado_tasks', JSON.stringify(tasks));
-                renderTasks();
+                
+                fetch(`/dashboard/api/delete-task/${taskID}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchTasks(); 
+                    } else {
+                        alert('Error deleting task!');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             });
         });
     }
 
     setupNavigation();
-    renderTasks();
+    fetchTasks(); 
 });
