@@ -13,8 +13,8 @@
             <a href="/" class="y-icon">Y</a>
             <a href="/" class="logo-brand">YallaDo</a>
         </div>
-        <div class="nav-center">
-            <a href="/api/tasks/task-details/{{ request.session.user_name }}/">Task Details</a>
+        <div class="nav-center" id="nav-center">
+            <a href="/api/tasks/task-details/">Task Details</a>
             <a href="/api/tasks/completed-tasks/">Completed Tasks</a>
         </div>
         <div class="nav-right">
@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="task-footer">
-                        <a href="/api/tasks/task-details/{{ task.task_ID }}/" class="btn-details">
+                        <a href="/api/tasks/task-details/?task_id={{ task.task_ID }}" class="btn-details">
                             📋 View Details →
                         </a>
                         <button
