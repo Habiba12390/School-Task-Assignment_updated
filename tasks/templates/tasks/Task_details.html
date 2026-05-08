@@ -1,24 +1,24 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Details - YallaDo</title>
-    <link rel="stylesheet" href="Task_details.css">
-    <script src="Task_details.js" defer></script>
+    <link rel="stylesheet" href="{% static 'css/Task_details.css' %}">
 </head>
 <body>
 
 <nav>
     <div class="nav-left">
-        <a href="Home.html" class="y-icon">Y</a>
-        <a href="Home.html" class="logo-brand">YallaDo</a>
+        <a href="/" class="y-icon">Y</a>
+        <a href="/" class="logo-brand">YallaDo</a>
     </div>
     
     <div class="nav-center" id="nav-center"></div>
 
     <div class="nav-right">
-        <a href="Home.html" class="logout-box">Logout</a>
+        <a href="/" class="logout-box">Logout</a>
     </div>
 </nav>
 
@@ -69,7 +69,7 @@
             <div class="td-empty-icon">🎉</div>
             <p class="td-empty-title">All tasks completed!</p>
             <p class="td-empty-text">Great work. Head to Completed Tasks to review them.</p>
-            <a href="Completed_tasks.html" class="td-empty-link">View Completed Tasks →</a>
+            <a href="/api/tasks/completed-tasks/" class="td-empty-link">View Completed Tasks →</a>
         </div>
     </template>
 </main>
@@ -78,11 +78,16 @@
     <h3>Assign smart Not hard</h3>
     <hr>
     <p>
-        <a href="About_us.html">About Us</a>
-        <a href="Contact.html">Contact Us</a>
+        <a href="/about/">About Us</a>
+        <a href="/contact/">Contact Us</a>
     </p>
     <p>&copy; 2026 All Rights Reserved.</p>
 </footer>
 
+<script>
+    const LOGGED_NAME = "{{ request.session.user_name|default:'' }}";
+    const LOGGED_ROLE = "{{ request.session.user_role|default:'' }}";
+</script>
+<script src="{% static 'js/Task_details.js' %}" defer></script>
 </body>
 </html>
