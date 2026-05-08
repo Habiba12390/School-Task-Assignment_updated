@@ -1,11 +1,22 @@
-document.addEventListener("DOMContentLoaded", () => {
+// Variables passed from Django template
+// LOGGED_NAME and LOGGED_ROLE are defined in the HTML before this script
 
-    const loggedName = localStorage.getItem("yallado_name") || '';
-    const loggedRole = localStorage.getItem("yallado_role") || "";
+document.addEventListener("DOMContentLoaded", async () => {
 
+    // Use Django session variables (passed from template)
+    const loggedName = typeof LOGGED_NAME !== 'undefined' ? LOGGED_NAME : "";
+    const loggedRole = typeof LOGGED_ROLE !== 'undefined' ? LOGGED_ROLE : "";
+    
     const main = document.querySelector("main");
     const emptyState = document.getElementById("empty-state");
     const template = document.getElementById("task-card-template");
+
+    // Redirect if not logged in
+    if (!loggedName || !loggedRole) {
+        console.error('User not logged in');
+        window.location.href = '/login/';
+        return;
+    }
 
     // ====================== Dynamic Nav ======================
     function setupNavigation() {
@@ -14,36 +25,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (loggedRole === 'admin') {
             navCenter.innerHTML = `
-                <a href="Admin_Dashboard.html">Admin Dashboard</a>
-                <a href="Task_details.html">Task Details</a>
-                 <a href="Add_Task.html">Add New Task</a>
-
+                <a href="/api/dashboard/admin-dashboard/">Admin Dashboard</a>
+                <a href="/api/tasks/task-details/">Task Details</a>
+                <a href="/api/tasks/add-task/">Add New Task</a>
             `;
         } else {
             navCenter.innerHTML = `
-                <a href="Teacher_Dashboard.html">Teacher Dashboard</a>
-                <a href="Task_details.html">Task Details</a>
+                <a href="/api/dashboard/teacher-dashboard/">Teacher Dashboard</a>
+                <a href="/api/tasks/task-details/">Task Details</a>
             `;
         }
     }
 
     // ====================== Render Completed Tasks ======================
-    const allTasks = JSON.parse(localStorage.getItem("yallado_tasks")) || [];
-
-    const completedTasks = allTasks.filter(task => {
-        if (loggedRole === 'admin') {
-            return task.created_by === loggedName && task.status === "Completed";
-        } else {
-            return task.teacher_name === loggedName && task.status === "Completed";
+    async function loadCompletedTasks() {
+        try {
+            const response = await fetch('/api/tasks/');
+            const allTasks = await response.json();
+            
+            const completedTasks = allTasks.filter(task => {
+                if (loggedRole === 'admin') {
+                    return task.created_by === loggedName && task.status === "Completed";
+                } else {
+                    return task.teacher_name === loggedName && task.status === "Completed";
+                }
+            });
+            
+            // Sort by completion date (newest first)
+            completedTasks.sort((a, b) => {
+                const dateA = a.completed_at || a.updated_at || '';
+                const dateB = b.completed_at || b.updated_at || '';
+                return dateB.localeCompare(dateA);
+            });
+            
+            renderCompletedTasks(completedTasks);
+        } catch (error) {
+            console.error('Error loading completed tasks:', error);
+            if (emptyState) {
+                emptyState.style.display = "block";
+                const emptyTitle = emptyState.querySelector('.empty-title');
+                if (emptyTitle) emptyTitle.textContent = 'Error loading tasks';
+            }
         }
-    });
+    }
 
-    completedTasks.sort((a, b) => (b.completed_at || 0) > (a.completed_at || 0) ? 1 : -1);
-
-    if (completedTasks.length === 0) {
-        if (emptyState) emptyState.style.display = "block";
-    } else {
+    // ====================== Render Tasks Function ======================
+    function renderCompletedTasks(completedTasks) {
+        // Hide empty state initially
         if (emptyState) emptyState.style.display = "none";
+        
+        // Remove any existing task cards
+        document.querySelectorAll('.task-card').forEach(card => card.remove());
+        
+        if (completedTasks.length === 0) {
+            if (emptyState) emptyState.style.display = "block";
+            return;
+        }
 
         completedTasks.forEach((task, i) => {
             const fragment = template.content.cloneNode(true);
@@ -73,5 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ====================== Initialize ======================
     setupNavigation();
+    await loadCompletedTasks();
 });
