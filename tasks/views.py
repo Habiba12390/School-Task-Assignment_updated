@@ -1,69 +1,79 @@
-from rest_framework.decorators import api_view # type: ignore
-from rest_framework.response import Response # type: ignore
-from rest_framework import status # type: ignore
-from .models import Task
-from .serializers import TaskSerializer
-from django.shortcuts import render # type: ignore
+from django.shortcuts import render, redirect  # type: ignore
+from django.http import JsonResponse
+from tasks.models import Task
 
-@api_view(['GET', 'POST'])
-def task_list(request):
 
-    if request.method == 'GET':
-        tasks = Task.objects.all()
-        serializer = TaskSerializer(tasks, many=True)
-        return Response(serializer.data)
+def admin_dashboard(request):
+    if not request.session.get("user_id"):
+        return redirect("/login/")
+    if request.session.get("user_role") != "admin":
+        return redirect("/api/dashboard/teacher-dashboard/")
+    return render(request, "Admin_dashboard.html")
 
-    elif request.method == 'POST':
-        serializer = TaskSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-            )
-        return Response( serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
-    
-@api_view(['GET', 'PUT', 'DELETE'])
-def task_detail(request, task_id):
+
+def teacher_dashboard(request):
+    if not request.session.get("user_id"):
+        return redirect("/login/")
+    if request.session.get("user_role") != "teacher":
+        return redirect("/api/dashboard/admin-dashboard/")
+
+    teacher_name = request.session.get("user_name", "")
+    priority_filter = request.GET.get("priority", "").strip()
+
+    tasks = Task.objects.filter(teacher_name=teacher_name).exclude(status="Completed")
+
+    if priority_filter:
+        tasks = tasks.filter(priority__iexact=priority_filter)
+
+    context = {
+        "teacher_name": teacher_name,
+        "tasks": tasks,
+        "priority_filter": priority_filter,
+        "task_count": tasks.count(),
+    }
+    return render(request, "Teacher_dashboard.html", context)
+
+
+def teacher_complete_task(request, task_id):
+    """Mark a task as Completed via AJAX POST"""
+    if not request.session.get("user_id"):
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
 
     try:
-        task = Task.objects.get(task_ID=task_id)
+        task = Task.objects.get(
+            task_ID=task_id, teacher_name=request.session.get("user_name")
+        )
+        task.status = "Completed"
+        task.save()
+        return JsonResponse({"success": True})
     except Task.DoesNotExist:
-        return Response(
-            {'error': 'Task not found'},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        return JsonResponse({"error": "Task not found"}, status=404)
 
+
+def get_admin_tasks(request):
+    """API to fetch tasks for Admin via AJAX"""
+    if not request.session.get("user_id") or request.session.get("user_role") != "admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+    
+    admin_name = request.session.get("user_name", "")
+    
     if request.method == 'GET':
-        serializer = TaskSerializer(task)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
-        serializer = TaskSerializer(
-            task, data=request.data, partial=True
+        tasks = Task.objects.filter(created_by=admin_name).exclude(status='Completed').values(
+            'task_ID', 'task_title', 'teacher_name', 'priority', 'description'
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return JsonResponse({'tasks': list(tasks)})
 
-    elif request.method == 'DELETE':
-        task.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-def add_task_page(request):
-    return render(request, 'tasks/Add_Task.html')
-
-def edit_task_page(request):
-    return render(request, 'tasks/Edit_Task.html')
-
-def completed_tasks_page(request):
-    return render(request, 'tasks/Completed_tasks.html')
-
-def task_details_page(request, task_id):
-    return render(request, 'tasks/Task_details.html')
+def admin_delete_task(request, task_id):
+    """API to delete a task via AJAX"""
+    if not request.session.get("user_id") or request.session.get("user_role") != "admin":
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+        
+    if request.method == 'DELETE':
+        try:
+            task = Task.objects.get(task_ID=task_id)
+            task.delete()
+            return JsonResponse({'success': True})
+        except Task.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Task not found'})
