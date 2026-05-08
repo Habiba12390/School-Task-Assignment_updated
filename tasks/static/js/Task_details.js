@@ -1,7 +1,19 @@
-document.addEventListener("DOMContentLoaded", () => {
+// Variables passed from Django template
+// LOGGED_NAME and LOGGED_ROLE are defined in the HTML before this script
 
-    const loggedRole = localStorage.getItem("yallado_role") || "";
-    const loggedName = localStorage.getItem("yallado_name") || "";
+document.addEventListener("DOMContentLoaded", async () => {
+
+    // Use Django session variables (passed from template)
+    const loggedRole = typeof LOGGED_ROLE !== 'undefined' ? LOGGED_ROLE : "";
+    const loggedName = typeof LOGGED_NAME !== 'undefined' ? LOGGED_NAME : "";
+    const main = document.querySelector("main");
+
+    // Redirect if not logged in
+    if (!loggedName || !loggedRole) {
+        console.error('User not logged in');
+        window.location.href = '/login/';
+        return;
+    }
 
     // ====================== Dynamic Nav ======================
     function setupNavigation() {
@@ -10,14 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (loggedRole === "admin") {
             navCenter.innerHTML = `
-                <a href="Admin_Dashboard.html">Admin Dashboard</a>
-                <a href="Add_Task.html">Add New Task</a>
-                <a href="Completed_tasks.html">Completed Tasks</a>
+                <a href="/api/dashboard/admin-dashboard/">Admin Dashboard</a>
+                <a href="/api/tasks/add-task/">Add New Task</a>
+                <a href="/api/tasks/completed-tasks/">Completed Tasks</a>
             `;
         } else {
             navCenter.innerHTML = `
-                <a href="Teacher_Dashboard.html">Teacher Dashboard</a>
-                <a href="Completed_tasks.html">Completed Tasks</a>
+                <a href="/api/dashboard/teacher-dashboard/">Teacher Dashboard</a>
+                <a href="/api/tasks/completed-tasks/">Completed Tasks</a>
             `;
         }
     }
@@ -32,15 +44,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ====================== Filter: active tasks only ======================
-    function getMyActiveTasks() {
-        const allTasks = JSON.parse(localStorage.getItem("yallado_tasks")) || [];
+    async function getMyActiveTasks() {
+        try {
+            const response = await fetch('/api/tasks/');
+            const allTasks = await response.json();
+            
+            return allTasks.filter(task => {
+                if (loggedRole === "admin") {
+                    return task.created_by === loggedName && task.status !== "Completed";
+                } else {
+                    return task.teacher_name === loggedName && task.status !== "Completed";
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+            showToast('Could not load tasks ❌', 'error');
+            return [];
+        }
+    }
 
-        return allTasks.filter(task => {
-            if (loggedRole === "admin") {
-                return task.created_by === loggedName && task.status !== "Completed";
-            } else {
-                return task.teacher_name === loggedName && task.status !== "Completed";
-            }
+    // ====================== Check and Show Empty State ======================
+    async function checkAndShowEmptyState() {
+        const remainingTasks = await getMyActiveTasks();
+        
+        if (remainingTasks.length === 0) {
+            main.innerHTML = '';
+            const template = document.getElementById("empty-state-template");
+            main.appendChild(template.content.cloneNode(true));
+        } else {
+            renderAllRemainingTasks(remainingTasks);
+        }
+    }
+
+    // ====================== Render All Remaining Tasks ======================
+    function renderAllRemainingTasks(tasks) {
+        // Clear existing task cards
+        document.querySelectorAll('.task-card').forEach(card => card.remove());
+        
+        tasks.forEach((task, i) => {
+            const card = buildCard(task);
+            main.appendChild(card);
+            setTimeout(() => {
+                card.style.opacity = "1";
+                card.style.transform = "translateY(0)";
+            }, i * 80);
         });
     }
 
@@ -76,66 +123,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ====================== Mark Complete ======================
-    
-   function markComplete(taskID, cardEl) {
-    let tasks = JSON.parse(localStorage.getItem("yallado_tasks")) || [];
-    
-    const idx = tasks.findIndex(t => 
-        String(t.task_ID).trim() === String(taskID).trim()
-    );
-    
-    if (idx === -1) {
-        showToast('Task not found ❌', 'error');
-        return;
-    }
-
-    tasks[idx].status = "Completed";
-    tasks[idx].completed_at = new Date().toISOString();
-    localStorage.setItem('yallado_tasks', JSON.stringify(tasks));
-
-    showToast('Task marked as completed ✅');
-
-    cardEl.style.opacity = "0";
-    cardEl.style.transform = "translateY(-10px)";
-
-    setTimeout(() => {
-        cardEl.remove();
-
-        const remainingTasks = getMyActiveTasks();
-        
-        if (remainingTasks.length === 0) {
-            const emptyTemplate = document.getElementById("empty-state-template");
-            if (emptyTemplate) {
-                main.innerHTML = ''; 
-                main.appendChild(emptyTemplate.content.cloneNode(true));
+    async function markComplete(taskID, cardEl) {
+        try {
+            const response = await fetch(`/api/tasks/${taskID}/`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'Completed' })
+            });
+            
+            if (response.ok) {
+                showToast('Task marked as completed ✅');
+                
+                cardEl.style.opacity = "0";
+                cardEl.style.transform = "translateY(-10px)";
+                
+                setTimeout(() => {
+                    cardEl.remove();
+                    checkAndShowEmptyState();
+                }, 300);
+            } else {
+                showToast('Failed to update task ❌', 'error');
             }
-        } else {
-            renderAllRemainingTasks(remainingTasks);
+        } catch (error) {
+            console.error('Error updating task:', error);
+            showToast('Could not reach the server ❌', 'error');
         }
-    }, 300);
-} 
-
-
-
-function renderAllRemainingTasks(tasks) {
-    document.querySelectorAll('.task-card').forEach(card => card.remove());
-    
-    tasks.forEach((task, i) => {
-        const card = buildCard(task);
-        main.appendChild(card);
-        setTimeout(() => {
-            card.style.opacity = "1";
-            card.style.transform = "translateY(0)";
-        }, i * 80);
-    });
-}
+    }
 
     // ====================== Initialize ======================
     setupNavigation();
 
-    const main = document.querySelector("main");
-
-    const myTasks = getMyActiveTasks();
+    const myTasks = await getMyActiveTasks();
 
     if (myTasks.length === 0) {
         const template = document.getElementById("empty-state-template");
