@@ -9,6 +9,9 @@ def home(request):
 def contact(request):
     return render(request, 'contact.html')
 
+def about_us(request):
+    return render(request, 'About_us.html')
+
 def submit_contact_api(request):
     if request.method == 'POST':
         try:

@@ -7,4 +7,5 @@ urlpatterns = [
     path('api/dashboard/', include('dashboard.urls')),
     path('', include('public.urls')),
     path('', include('accounts.urls')), 
+    path('about/', include('public.urls')),
 ]
