@@ -212,3 +212,143 @@ footer p a:hover {
     }
 }
 
+
+/* ===================== Task Cards ===================== */
+.task-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 10px 0 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.task-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border: 1px solid #e5e7eb;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    opacity: 1;
+}
+
+.task-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(59,130,246,0.12);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    gap: 10px;
+}
+
+.task-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.task-status {
+    font-size: 0.78rem;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+.task-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    margin-bottom: 16px;
+}
+
+.task-label {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.task-value {
+    font-size: 0.85rem;
+    color: #374151;
+    font-weight: 500;
+    margin-left: 4px;
+}
+
+/* Priority Badges */
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.badge-high   { background: #fee2e2; color: #b91c1c; }
+.badge-medium { background: #fef3c7; color: #b45309; }
+.badge-low    { background: #dcfce7; color: #15803d; }
+
+/* Task Footer Buttons */
+.task-footer {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.btn-details {
+    flex: 1;
+    text-align: center;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.btn-details:hover { background: #dbeafe; }
+
+.btn-complete {
+    flex: 1;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #f0fdf4;
+    color: #15803d;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-complete:hover    { background: #dcfce7; }
+.btn-complete:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Clear filter button */
+.btn-clear {
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #f3f4f6;
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+.btn-clear:hover { background: #e5e7eb; }
+
+/* Empty State */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+}
+.empty-state-icon  { font-size: 3rem; margin-bottom: 12px; }
+.empty-state-title { font-size: 1.1rem; font-weight: 600; color: #6b7280; }
+.empty-state-text  { font-size: 0.9rem; margin-top: 6px; }
+.empty-state a     { color: #3b82f6; }

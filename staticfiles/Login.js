@@ -1,29 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.querySelector('form');
 
-  loginForm.addEventListener('submit', (e) => {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email    = document.getElementById('user_email').value.trim().toLowerCase();
     const password = document.getElementById('password').value.trim();
 
-    const users = JSON.parse(localStorage.getItem('yallado_users') || '[]');
-    
-    const user  = users.find(u => u.email === email && u.password === password);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-    if (!user) {
-      alert('Email or password is incorrect. Please try again.');
-      return;
-    }
+    try {
+      const response = await fetch('/login-api/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ email, password }),
+      });
 
-    localStorage.setItem('yallado_role',  user.role);
-    localStorage.setItem('yallado_email', user.email);
-    localStorage.setItem('yallado_name',  user.name);
+      const data = await response.json();
 
-    if (user.role === 'admin') {
-      window.location.href = 'Admin_dashboard.html';
-    } else {
-      window.location.href = 'Teacher_dashboard.html';
+      if (!response.ok) {
+        alert(data.error || 'Email or password is incorrect. Please try again.');
+        return;
+      }
+
+      window.location.href = data.redirect_url;
+
+    } catch (err) {
+      alert('Could not reach the server. Make sure the backend is running.');
     }
   });
 });

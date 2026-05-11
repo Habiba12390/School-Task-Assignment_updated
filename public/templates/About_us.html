@@ -1,22 +1,20 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="About_us.css">
-    <script src="About_us.js" defer></script>
+    <link rel="stylesheet" href="{% static 'About_us.css' %}">
+    <script src="{% static 'About_us.js' %}" defer></script>
     <title>About Us - YallaDo</title>
 </head>
 <body>
 
     <header>
         <nav>
-           <div class="nav-left">
-                    <a href="Home.html" class="y-icon">Y</a>
-                    <a href="Home.html" class="logo-brand">YallaDo</a>
-                </div>
-            
-           
-    
+            <div class="nav-left">
+                <a href="/" class="y-icon">Y</a>
+                <a href="/" class="logo-brand">YallaDo</a>
+            </div>
         </nav>
     </header>
 
@@ -59,14 +57,11 @@
     </main>
 
     <footer>
-           
         <h3>Assign smart Not hard</h3>
-
-
         <hr>
         <p>
-            <a href="About_us.html">About Us</a>
-            <a href="Contact.html">Contact Us</a>
+            <a href="/about/">About Us</a>
+            <a href="/contact/">Contact Us</a>
         </p>
         <p>&copy; 2026 All Rights Reserved.</p>
     </footer>

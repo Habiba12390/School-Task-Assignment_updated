@@ -1,6 +1,5 @@
 let selectedRole = '';
 
-/* ── Open Modal ── */
 function openModal(role) {
   selectedRole = role;
   const badge = document.getElementById('modalBadge');
@@ -21,11 +20,19 @@ function openModal(role) {
     sub.textContent   = 'Create your YallaDo admin account';
   }
 
+  document.getElementById('inputUsername').value = '';
+  document.getElementById('inputEmail').value = '';
+  document.getElementById('inputPassword').value = '';
+  document.getElementById('inputConfirmPassword').value = '';
+
   document.getElementById('modalOverlay').classList.add('open');
 }
 
-/* ── Close Modal ── */
 function closeModal() {
+  document.getElementById('inputUsername').value = '';
+  document.getElementById('inputEmail').value = '';
+  document.getElementById('inputPassword').value = '';
+  document.getElementById('inputConfirmPassword').value = '';
   document.getElementById('modalOverlay').classList.remove('open');
 }
 
@@ -33,27 +40,41 @@ function closeModalOutside(e) {
   if (e.target === document.getElementById('modalOverlay')) closeModal();
 }
 
-/* ── Handle Signup ── */
 async function handleSignup() {
   if (!selectedRole) {
     alert('Please choose: Are you a Teacher or an Admin?');
     return;
   }
 
-  const name     = document.getElementById('inputName').value.trim();
-  const email    = document.getElementById('inputEmail').value.trim().toLowerCase();
-  const password = document.getElementById('inputPassword').value.trim();
+  const username        = document.getElementById('inputUsername').value.trim();
+  const email           = document.getElementById('inputEmail').value.trim().toLowerCase();
+  const password        = document.getElementById('inputPassword').value.trim();
+  const confirmPassword = document.getElementById('inputConfirmPassword').value.trim();
 
-  if (!name || !email || !password) {
+  if (!username || !email || !password || !confirmPassword) {
     alert('Please fill in all fields.');
     return;
   }
 
+  if (password !== confirmPassword) {
+    alert('Passwords do not match.');
+    return;
+  }
+
+  const csrfToken = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1] || '';
+
   try {
-    const response = await fetch('/api/signup/', {
+    const response = await fetch('/signup-api/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password, role: selectedRole })
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({ username, email, password, confirm_password: confirmPassword, role: selectedRole })
     });
 
     const data = await response.json();
@@ -63,11 +84,8 @@ async function handleSignup() {
       return;
     }
 
-    if (data.role === 'admin') {
-      window.location.href = '/admin-dashboard/';
-    } else {
-      window.location.href = '/teacher-dashboard/';
-    }
+    // ✅ redirect_url جاية من السيرفر
+    window.location.href = data.redirect_url;
 
   } catch (err) {
     alert('Something went wrong. Please try again.');
