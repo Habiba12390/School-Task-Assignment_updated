@@ -26,6 +26,9 @@ def signup(request):
         if password != confirm_password:
             return JsonResponse({'error': 'Passwords do not match.'}, status=400)
 
+        if not email.endswith('@gmail.com'):
+            return JsonResponse({'error': 'Please use a Gmail address (@gmail.com).'}, status=400)
+
         if User.objects.filter(email=email).exists():
             return JsonResponse({'error': 'Email already exists.'}, status=400)
 

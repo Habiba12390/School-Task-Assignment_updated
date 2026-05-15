@@ -61,6 +61,11 @@ async function handleSignup() {
     return;
   }
 
+  if (!email.endsWith('@gmail.com')) {
+    alert('Please use a Gmail address (@gmail.com).');
+    return;
+  }
+
   const csrfToken = document.cookie
     .split('; ')
     .find(row => row.startsWith('csrftoken='))
@@ -84,7 +89,6 @@ async function handleSignup() {
       return;
     }
 
-    // ✅ redirect_url جاية من السيرفر
     window.location.href = data.redirect_url;
 
   } catch (err) {
